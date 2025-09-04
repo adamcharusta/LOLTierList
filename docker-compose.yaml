@@ -1,12 +1,43 @@
+
 services:
-  web:
-    image: charustaadam95/loltierlist-web:${WEB_APP_VERSION}
+  redis:
+    image: redis:${REDIS_APP_VERSION}
+    command: ["redis-server","--appendonly","yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
     restart: unless-stopped
     platform: ${PLATFORM}
-    ports:
-      - "${WEB_PORT}:8080"
+
+  web:
+    image: charustaadam95/loltierlist-web:${WEB_APP_VERSION}
+    platform: ${PLATFORM}
+    ports: ["${WEB_PORT}:8080"]
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:8080"
+      Redis__ConnectionString: "redis:6379"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    pull_policy: always
 
   worker:
     image: charustaadam95/loltierlist-worker:${WORKER_APP_VERSION}
-    restart: unless-stopped
     platform: ${PLATFORM}
+    environment:
+      DOTNET_ENVIRONMENT: "Production"
+      Redis__ConnectionString: "redis:6379"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    pull_policy: always
+
+volumes:
+  redis-data:
