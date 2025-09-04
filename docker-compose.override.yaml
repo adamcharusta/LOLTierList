@@ -17,6 +17,7 @@ services:
       timeout: 2s
       retries: 10
     restart: unless-stopped
+    ports: ["6379:6379"]
 
   web:
     image: loltierlist-web:dev

@@ -1,12 +1,11 @@
-
 services:
   redis:
     image: redis:${REDIS_APP_VERSION}
-    command: ["redis-server","--appendonly","yes"]
+    command: [ "redis-server","--appendonly","yes" ]
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 2s
       retries: 10
@@ -16,11 +15,19 @@ services:
   web:
     image: charustaadam95/loltierlist-web:${WEB_APP_VERSION}
     platform: ${PLATFORM}
-    ports: ["${WEB_PORT}:8080"]
+    ports: [ "${WEB_PORT}:8080" ]
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
-      Redis__ConnectionString: "redis:6379"
+      DOTNET_ENVIRONMENT: "Production"
+      Redis__ConnectionString: "${REDIS_HOST}:${REDIS_PORT}"
+      Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL}"
+      Redis__ResolveDns: "${REDIS_RESOLVE_DNS}"
+      Redis__ConnectRetry: "${REDIS_CONNECT_RETRY}"
+      Redis__ConnectTimeoutMs: "${REDIS_CONNECT_TIMEOUT_MS}"
+      Redis__KeepAliveSec: "${REDIS_KEEP_ALIVE_SEC}"
+      Redis__Database: "${REDIS_DATABASE}"
+      Redis__KeyPrefix: "${REDIS_KEY_PREFIX}"
     depends_on:
       redis:
         condition: service_healthy
@@ -32,7 +39,14 @@ services:
     platform: ${PLATFORM}
     environment:
       DOTNET_ENVIRONMENT: "Production"
-      Redis__ConnectionString: "redis:6379"
+      Redis__ConnectionString: "${REDIS_HOST}:${REDIS_PORT}"
+      Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL}"
+      Redis__ResolveDns: "${REDIS_RESOLVE_DNS}"
+      Redis__ConnectRetry: "${REDIS_CONNECT_RETRY}"
+      Redis__ConnectTimeoutMs: "${REDIS_CONNECT_TIMEOUT_MS}"
+      Redis__KeepAliveSec: "${REDIS_KEEP_ALIVE_SEC}"
+      Redis__Database: "${REDIS_DATABASE}"
+      Redis__KeyPrefix: "${REDIS_KEY_PREFIX}"
     depends_on:
       redis:
         condition: service_healthy
