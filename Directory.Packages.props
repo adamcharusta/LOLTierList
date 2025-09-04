@@ -1,0 +1,13 @@
+<!-- For more info on central package management go to https://devblogs.microsoft.com/nuget/introducing-central-package-management/ -->
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="6.0.0"/>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+    <PackageVersion Include="xunit" Version="2.5.3"/>
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3"/>
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <RootNamespace>LOLTierList.Worker</RootNamespace>
+    <AssemblyName>LOLTierList.Worker</AssemblyName>
+    <UserSecretsId>dotnet-Worker-153fac06-2bee-4449-a532-c2fcbd11157b</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abstractions\Abstractions.csproj"/>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
+  </ItemGroup>
+</Project>

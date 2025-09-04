@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>LOLTierList.E2ETests</RootNamespace>
+    <AssemblyName>LOLTierList.E2ETests</AssemblyName>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="xunit"/>
+    <PackageReference Include="xunit.runner.visualstudio"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\src\Web\Web.csproj"/>
+    <ProjectReference Include="..\..\src\Worker\Worker.csproj"/>
+  </ItemGroup>
+
+</Project>

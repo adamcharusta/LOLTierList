@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>LOLTierList.UnitTests</RootNamespace>
+    <AssemblyName>LOLTierList.UnitTests</AssemblyName>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="xunit"/>
+    <PackageReference Include="xunit.runner.visualstudio"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Abstractions\Abstractions.csproj"/>
+    <ProjectReference Include="..\..\src\Application\Application.csproj"/>
+    <ProjectReference Include="..\..\src\Domain\Domain.csproj"/>
+  </ItemGroup>
+
+</Project>
