@@ -1,4 +1,20 @@
 services:
+  seq:
+    image: datalust/seq:${SEQ_APP_VERSION}
+    environment:
+      - ACCEPT_EULA=${SEQ_ACCEPT_EULA}
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=True
+      - SEQ_PASSWORD=${SEQ_PASSWORD}
+    ports:
+      - "${SEQ_UI_PORT}:80"
+      - "${SEQ_API_PORT}:5341"
+    volumes:
+      - seq-data:/data
+    restart: unless-stopped
+    platform: ${PLATFORM}
+    networks:
+      - seqnet
+  
   redis:
     image: redis:${REDIS_APP_VERSION}
     command: [ "redis-server","--appendonly","yes" ]
@@ -11,6 +27,8 @@ services:
       retries: 10
     restart: unless-stopped
     platform: ${PLATFORM}
+    networks:
+      - redisnet
 
   web:
     image: charustaadam95/loltierlist-web:${WEB_APP_VERSION}
@@ -20,7 +38,7 @@ services:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
       DOTNET_ENVIRONMENT: "Production"
-      Redis__ConnectionString: "${REDIS_HOST}:${REDIS_PORT}"
+      Redis__ConnectionString: "redis:6379"
       Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL}"
       Redis__ResolveDns: "${REDIS_RESOLVE_DNS}"
       Redis__ConnectRetry: "${REDIS_CONNECT_RETRY}"
@@ -28,18 +46,22 @@ services:
       Redis__KeepAliveSec: "${REDIS_KEEP_ALIVE_SEC}"
       Redis__Database: "${REDIS_DATABASE}"
       Redis__KeyPrefix: "${REDIS_KEY_PREFIX}"
+      Seq__ServerUrl: "http://seq:${SEQ_API_PORT}"
     depends_on:
       redis:
         condition: service_healthy
     restart: unless-stopped
     pull_policy: always
+    networks:
+      - redisnet
+      - seqnet
 
   worker:
     image: charustaadam95/loltierlist-worker:${WORKER_APP_VERSION}
     platform: ${PLATFORM}
     environment:
       DOTNET_ENVIRONMENT: "Production"
-      Redis__ConnectionString: "${REDIS_HOST}:${REDIS_PORT}"
+      Redis__ConnectionString: "redis:6379"
       Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL}"
       Redis__ResolveDns: "${REDIS_RESOLVE_DNS}"
       Redis__ConnectRetry: "${REDIS_CONNECT_RETRY}"
@@ -47,11 +69,22 @@ services:
       Redis__KeepAliveSec: "${REDIS_KEEP_ALIVE_SEC}"
       Redis__Database: "${REDIS_DATABASE}"
       Redis__KeyPrefix: "${REDIS_KEY_PREFIX}"
+      Seq__ServerUrl: "http://seq:${SEQ_API_PORT}"
     depends_on:
       redis:
         condition: service_healthy
     restart: unless-stopped
     pull_policy: always
+    networks:
+      - redisnet
+      - seqnet
 
 volumes:
   redis-data:
+  seq-data:
+
+networks:
+  seqnet:
+    driver: bridge
+  redisnet:
+    driver: bridge

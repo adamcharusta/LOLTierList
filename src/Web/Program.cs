@@ -1,29 +1,39 @@
 using LOLTierList.Infrastructure;
+using LOLTierList.Web;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Service", "web")
+    .WriteTo.Console()
+    .WriteTo.Seq(builder.Configuration.GetSection("Seq")["ServerUrl"] ?? "http://localhost:5341")
+    .CreateLogger();
 
-builder.Services.AddInfrastructure(builder.Configuration);
+Log.Error("Starting web host");
 
-var app = builder.Build();
-
-if (!app.Environment.IsDevelopment())
+try
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    builder.Services
+        .AddInfrastructure(builder.Configuration)
+        .AddWeb();
+
+    var app = builder.Build();
+
+    app
+        .UseWeb()
+        .Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
-app.MapHealthChecks("/health");
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    "default",
-    "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
+public partial class Program;

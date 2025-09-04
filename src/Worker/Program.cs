@@ -1,10 +1,33 @@
 using LOLTierList.Infrastructure;
 using LOLTierList.Worker;
+using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddHostedService<Worker>();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Service", "worker")
+    .WriteTo.Console()
+    .WriteTo.Seq(builder.Configuration.GetSection("Seq")["ServerUrl"] ?? "http://localhost:5341")
+    .CreateLogger();
 
-var host = builder.Build();
-host.Run();
+try
+{
+    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddHostedService<Worker>();
+
+    var host = builder.Build();
+    host.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+
+public partial class Program;

@@ -1,23 +1,7 @@
 # For local development only
 services:
   redis:
-    image: redis:${REDIS_APP_VERSION}
-    volumes: []
-    tmpfs:
-      - /dev/shm/redis
-    command:
-      - sh
-      - -c
-      - |
-        mkdir -p /dev/shm/redis
-        exec redis-server --appendonly no --dir /dev/shm/redis --dbfilename dump.rdb
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 10
-    restart: unless-stopped
-    ports: ["6379:6379"]
+    ports: [ "6379:6379" ]
 
   web:
     image: loltierlist-web:dev
@@ -27,13 +11,6 @@ services:
     pull_policy: never
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:8080"
-      Redis__ConnectionString: "redis:6379"
-    ports: ["${WEB_PORT}:8080"]
-    depends_on:
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
 
   worker:
     image: loltierlist-worker:dev
@@ -43,11 +20,6 @@ services:
     pull_policy: never
     environment:
       DOTNET_ENVIRONMENT: "Development"
-      Redis__ConnectionString: "redis:6379"
-    depends_on:
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
 
   redisinsight:
     image: redis/redisinsight:2.70

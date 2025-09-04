@@ -1,17 +1,15 @@
 using Abstractions.Service;
+using Serilog;
 
 namespace LOLTierList.Worker;
 
-public class Worker(ILogger<Worker> logger, IRedisService redisService) : BackgroundService
+public class Worker(IRedisService redisService) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
+            Log.Information("Worker running at: {time}", DateTimeOffset.Now);
 
             await redisService.SetAsync("TestInfo", new { Time = DateTimeOffset.Now }, TimeSpan.FromMinutes(5),
                 stoppingToken);
