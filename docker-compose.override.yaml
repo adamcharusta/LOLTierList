@@ -1,0 +1,14 @@
+# For local development only
+
+services:
+  web:
+    image: loltierlist-web:dev       
+    build:
+      context: .
+      dockerfile: src/Web/Dockerfile
+
+  worker:
+    image: loltierlist-worker:dev
+    build:
+      context: .
+      dockerfile: src/Worker/Dockerfile

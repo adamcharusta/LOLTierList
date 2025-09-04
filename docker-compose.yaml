@@ -1,0 +1,12 @@
+services:
+  web:
+    image: charustaadam95/loltierlist-web:${WEB_APP_VERSION}
+    restart: unless-stopped
+    platform: ${PLATFORM}
+    ports:
+      - "${WEB_PORT}:8080"
+
+  worker:
+    image: charustaadam95/loltierlist-worker:${WORKER_APP_VERSION}
+    restart: unless-stopped
+    platform: ${PLATFORM}
