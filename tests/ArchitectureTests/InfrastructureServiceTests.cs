@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace LOLTierList.ArchitectureTests;
 
@@ -10,28 +9,12 @@ public class InfrastructureServiceTests
     private static readonly string ServiceNamespace = Layers.Infrastructure + ".Services";
     private static readonly string ServiceSuffix = "Service";
 
-    private static bool IsCompilerGenerated(Type t)
-    {
-        return t.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any()
-               || t.Name.StartsWith("<")
-               || t.FullName?.Contains("+<") == true;
-    }
-
-    private static bool IsConcreteServiceType(Type t)
-    {
-        return t is { IsClass: true, IsAbstract: false }
-               && !t.IsNested
-               && t.Namespace is not null
-               && t.Namespace.StartsWith(ServiceNamespace, StringComparison.Ordinal)
-               && !IsCompilerGenerated(t);
-    }
-
     [Fact]
     public void Services_should_be_sealed_and_named_Service()
     {
         var candidates = Infra
             .GetLoadableTypes()
-            .Where(IsConcreteServiceType)
+            .Where(x => x.IsConcreteServiceType(ServiceNamespace))
             .ToList();
 
         candidates.Should().NotBeEmpty(
@@ -61,7 +44,7 @@ public class InfrastructureServiceTests
     {
         var services = Infra
             .GetLoadableTypes()
-            .Where(IsConcreteServiceType)
+            .Where(x => x.IsConcreteServiceType(ServiceNamespace))
             .ToList();
 
         services.Should().NotBeEmpty(
@@ -69,9 +52,7 @@ public class InfrastructureServiceTests
 
         var offenders = services
             .Where(t => !t.GetInterfaces().Any(i =>
-                // po assembly
                 string.Equals(i.Assembly.GetName().Name, AbstractionsAsmName, StringComparison.Ordinal)
-                // lub po namespace (gdy assembly name i root namespace się różnią)
                 || (i.Namespace?.StartsWith(AbstractionsAsmName, StringComparison.Ordinal) ?? false)))
             .Select(t => t.FullName)
             .OrderBy(x => x)

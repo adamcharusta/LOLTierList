@@ -31,7 +31,7 @@ public class WebControllerTests
         {
             var actions = t.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(m => !m.IsDefined(typeof(NonActionAttribute), true))
-                .Where(m => IsActionReturnType(m.ReturnType))
+                .Where(m => m.ReturnType.IsActionReturnType())
                 .ToArray();
 
             actions.Should().NotBeEmpty(
@@ -39,24 +39,5 @@ public class WebControllerTests
         }
     }
 
-    private static bool IsActionReturnType(Type rt)
-    {
-        if (typeof(IActionResult).IsAssignableFrom(rt))
-        {
-            return true;
-        }
-
-        if (rt.IsGenericType && rt.GetGenericTypeDefinition() == typeof(Task<>)
-                             && typeof(IActionResult).IsAssignableFrom(rt.GetGenericArguments()[0]))
-        {
-            return true;
-        }
-
-        if (rt == typeof(Task))
-        {
-            return true;
-        }
-
-        return false;
-    }
+    
 }
