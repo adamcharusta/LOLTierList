@@ -1,4 +1,4 @@
-using Abstractions.Service;
+using LOLTierList.Abstractions.Services;
 using LOLTierList.Infrastructure.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -7,7 +7,7 @@ using StackExchange.Redis;
 
 namespace LOLTierList.Infrastructure.Services;
 
-public class RedisService(IConnectionMultiplexer mux, RedisClientOptions opts) : IRedisService
+public sealed class RedisService(IConnectionMultiplexer mux, RedisClientOptions opts) : IRedisService
 {
     private static readonly JsonSerializerSettings JsonSettings = new()
     {

@@ -5,4 +5,8 @@
     <AssemblyName>LOLTierList.Domain</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR"/>
+  </ItemGroup>
+
 </Project>

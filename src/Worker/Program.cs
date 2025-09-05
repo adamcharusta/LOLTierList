@@ -12,6 +12,8 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Seq(builder.Configuration.GetSection("Seq")["ServerUrl"] ?? "http://localhost:5341")
     .CreateLogger();
 
+Log.Information("Starting worker host");
+
 try
 {
     builder.Services.AddInfrastructure(builder.Configuration);
@@ -27,6 +29,7 @@ catch (Exception ex)
 }
 finally
 {
+    Log.Information("Shutting down worker host");
     Log.CloseAndFlush();
 }
 

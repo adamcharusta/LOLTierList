@@ -1,4 +1,4 @@
-using Abstractions.Service;
+using LOLTierList.Abstractions.Services;
 using Serilog;
 
 namespace LOLTierList.Worker;

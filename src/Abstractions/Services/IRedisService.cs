@@ -1,4 +1,4 @@
-namespace Abstractions.Service;
+namespace LOLTierList.Abstractions.Services;
 
 public interface IRedisService
 {

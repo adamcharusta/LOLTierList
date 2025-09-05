@@ -12,7 +12,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Seq(builder.Configuration.GetSection("Seq")["ServerUrl"] ?? "http://localhost:5341")
     .CreateLogger();
 
-Log.Error("Starting web host");
+Log.Information("Starting web host");
 
 try
 {
@@ -33,6 +33,7 @@ catch (Exception ex)
 }
 finally
 {
+    Log.Information("Shutting down web host");
     Log.CloseAndFlush();
 }
 
